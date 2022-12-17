@@ -10,8 +10,9 @@ public class InputManager : MonoBehaviour
     public UnityAction OnMoveStarted;
     public UnityAction OnRightMoved;
     public UnityAction OnLeftMoved;
-    public UnityAction OnKickPressed;
     public UnityAction OnNothingPressed;
+    public UnityAction OnKick;
+    public UnityAction OnPunch;
 
     bool isUpPressed;
     bool isRightPressed;
@@ -41,28 +42,37 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    public void onUpPressed()
+    public void OnUpPressed()
     {
         isUpPressed = true;
     }
-    public void onUpReleased()
+    public void OnUpReleased()
     {
         isUpPressed = false;
     }
-    public void onRightDown()
+    public void OnRightDown()
     {
         isRightPressed = true;
     }
-    public void onRightUp()
+    public void OnRightUp()
     {
         isRightPressed = false;
     }
-    public void onLeftDown()
+    public void OnLeftDown()
     {
         isLeftPressed = true;
     }
-    public void onLeftUp()
+    public void OnLeftUp()
     {
         isLeftPressed = false;
+    }
+
+    public void OnPunchPressed()
+    {
+        OnPunch?.Invoke();
+    }
+    public void OnKickPressed()
+    {
+        OnKick?.Invoke();
     }
 }

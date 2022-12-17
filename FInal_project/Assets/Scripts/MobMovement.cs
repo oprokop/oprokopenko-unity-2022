@@ -2,23 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(SpriteRenderer))]
 
 public class MobMovement : MonoBehaviour
 {
     [SerializeField] GameObject player;
-    [SerializeField] float speed = 10.0f;
+    [SerializeField] float speed = 6.0f;
     [SerializeField] float maxDistanceToPlayer = 10.0f;
     [SerializeField] float offset = 2.0f;
     SpriteRenderer spriteRenderer;
+    [SerializeField] DamageSystem damageSystem;
+    public UnityAction OnMobPunch;
+    bool isMoving;
     //bool isFlip;
     //[SerializeField] LayerMask PlayerMask;
-    private void Start()
+    void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        damageSystem = GetComponent<DamageSystem>();
     }
-    private void Update()
+    void Update()
     {
         var currentDistance = Mathf.Abs(transform.position.x - player.transform.position.x);
         if (currentDistance < maxDistanceToPlayer)
@@ -27,29 +32,33 @@ public class MobMovement : MonoBehaviour
             {
                 transform.Translate(Vector2.left * speed * Time.deltaTime);
                 spriteRenderer.flipX = false;
+                isMoving = true;
             }
-            if(transform.position.x < player.transform.position.x - offset)
+            else if(transform.position.x < player.transform.position.x - offset)
             {
                 transform.Translate(Vector2.right * speed * Time.deltaTime);
                 spriteRenderer.flipX = true;
+                isMoving = true;
+            }
+            else
+            {
+                isMoving = false;
             }
         }
+        
+        else
+        {
+            isMoving = false;
+        }
+        if (currentDistance <= offset + 1.0f)
+        {
+            //damageSystem.MobPunch();
+            OnMobPunch?.Invoke();
+        }
+    }
 
-        //var hit = Physics2D.OverlapArea(transform.position, Vector2.left);
-        //if (hit != null)
-        //{
-        //    if (hit.CompareTag("Player"))
-        //    {
-        //        transform.Translate(Vector2.left * speed * Time.deltaTime);
-        //    }
-        //}
-        //RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.left, maxDistanceToPlayer, PlayerMask);
-        //if (hit.collider != null)
-        //{
-        //    if (hit.collider.CompareTag("Player"))
-        //    {
-        //        transform.Translate(Vector2.left * speed * Time.deltaTime);
-        //    }
-        //}
+    public bool IsMoving()
+    {
+        return isMoving;
     }
 }
